@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jurupa Valley Tentative Agenda</title>
+<style>
+  :root{
+    --navy:#123454;
+    --navy2:#1c4a73;
+    --sky:#e7f1fa;
+    --green:#eaf4e2;
+    --pink:#f5d8e9;
+    --red:#f7c9c9;
+    --yellow:#fff36a;
+    --gray:#f4f6f8;
+    --border:#cfd6dd;
+    --text:#17212b;
+    --muted:#66727f;
+    --white:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Segoe UI, Arial, Helvetica, sans-serif;color:var(--text);background:#eef2f5}
+  header{
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:#fff;padding:24px 28px;box-shadow:0 2px 8px rgba(0,0,0,.16)
+  }
+  header h1{margin:0;font-size:28px;font-weight:700}
+  header p{margin:6px 0 0;color:#dbe7f2}
+  .app{max-width:1500px;margin:0 auto;padding:22px}
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px
+  }
+  button,.btn{
+    border:0;border-radius:7px;padding:10px 14px;font-weight:600;cursor:pointer;
+    font-size:14px
+  }
+  .primary{background:var(--navy);color:white}
+  .secondary{background:white;color:var(--navy);border:1px solid #aebbc7}
+  .danger{background:#a61b1b;color:white}
+  .ghost{background:#eef3f7;color:#234}
+  .toolbar .spacer{flex:1}
+  .cards{
+    display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:12px;margin-bottom:18px
+  }
+  .card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card .value{font-size:28px;font-weight:700;color:var(--navy)}
+  .card .label{font-size:13px;color:var(--muted);margin-top:2px}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden}
+  .filters{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:10px;padding:14px;border-bottom:1px solid var(--border);background:#fbfcfd}
+  input,select,textarea{
+    width:100%;padding:9px 10px;border:1px solid #bcc7d0;border-radius:6px;font:inherit;background:#fff
+  }
+  textarea{min-height:80px;resize:vertical}
+  .agenda-wrap{overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:1050px}
+  th,td{border:1px solid #8d969e;padding:7px 8px;vertical-align:top;font-size:13px}
+  th{background:#dedede;font-size:12px;text-transform:none}
+  .meeting-row td{font-weight:700;color:#142231;padding:6px 8px}
+  .meeting-pc td{background:#dfeaf5}
+  .meeting-drc td{background:#f1d6ee}
+  .meeting-director td{background:#f5c9c9}
+  .meeting-cc td{background:#e7f0dc}
+  .meeting-community td{background:var(--yellow)}
+  .meeting-other td{background:#e9ecef}
+  .status-pill{display:inline-block;padding:3px 7px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+  .status-tentative{background:#fff2c6;color:#7a5c00}
+  .status-confirmed{background:#dff1df;color:#225d22}
+  .status-completed{background:#e5e7eb;color:#555}
+  .status-cancelled{background:#f6d9d9;color:#8b1c1c}
+  .status-hold{background:#dfe8f5;color:#24527a}
+  .actions{white-space:nowrap}
+  .actions button{padding:5px 8px;margin:1px;font-size:12px}
+  .empty{padding:42px;text-align:center;color:var(--muted)}
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(15,25,35,.55);z-index:20;align-items:center;justify-content:center;padding:20px}
+  .modal{background:#fff;width:min(980px,100%);max-height:92vh;overflow:auto;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .modal-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .modal-head h2{margin:0;font-size:20px}
+  .modal-body{padding:18px}
+  .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .field.full{grid-column:1/-1}
+  .field.span2{grid-column:span 2}
+  label{display:block;font-size:12px;font-weight:700;color:#41505d;margin-bottom:5px}
+  .modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+  .small-note{font-size:12px;color:var(--muted);margin-top:10px}
+  .print-title{display:none}
+  @media (max-width:900px){
+    .cards{grid-template-columns:repeat(2,1fr)}
+    .filters{grid-template-columns:1fr 1fr}
+    .form-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:620px){
+    .cards,.filters,.form-grid{grid-template-columns:1fr}
+    .field.span2{grid-column:auto}
+    header h1{font-size:22px}
+  }
+  @media print{
+    @page{size:landscape;margin:.35in}
+    body{background:#fff}
+    header,.toolbar,.cards,.filters,.actions,.no-print{display:none!important}
+    .app{max-width:none;padding:0}
+    .panel{border:0;box-shadow:none}
+    .agenda-wrap{overflow:visible}
+    .print-title{display:block;text-align:center;margin-bottom:8px}
+    .print-title h1{font-size:18px;margin:0}
+    .print-title p{font-size:10px;margin:3px 0 8px}
+    table{min-width:0;font-size:9px}
+    th,td{font-size:8.5px;padding:3px 4px}
+    th{font-size:8px}
+    tr{break-inside:avoid}
+    .status-pill{border:0;padding:0;background:none!important;color:#000!important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Jurupa Valley Tentative Agenda</h1>
+  <p>Development Review Committee, Director Hearing, Planning Commission, and other tentative project schedules</p>
+</header>
+
+<main class="app">
+  <div class="toolbar">
+    <button class="primary" onclick="openAdd()">+ Add Agenda Item</button>
+    <button class="secondary" onclick="printAgenda()">Generate PDF / Print Latest Items</button>
+    <button class="secondary" onclick="exportData()">Export Backup</button>
+    <label class="btn secondary" for="importFile">Import Backup</label>
+    <input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">
+    <div class="spacer"></div>
+    <button class="ghost" onclick="resetFilters()">Clear Filters</button>
+  </div>
+
+  <section class="cards">
+    <div class="card"><div class="value" id="countUpcoming">0</div><div class="label">Upcoming Items</div></div>
+    <div class="card"><div class="value" id="countPC">0</div><div class="label">Planning Commission</div></div>
+    <div class="card"><div class="value" id="countDRC">0</div><div class="label">Development Review Committee</div></div>
+    <div class="card"><div class="value" id="countDirector">0</div><div class="label">Director Hearing</div></div>
+  </section>
+
+  <section class="panel">
+    <div class="filters">
+      <input id="search" placeholder="Search project ID, description, applicant, location..." oninput="render()">
+      <select id="filterMeeting" onchange="render()">
+        <option value="">All Meeting Types</option>
+        <option>Development Review Committee</option>
+        <option>Director Hearing</option>
+        <option>Planning Commission</option>
+        <option>City Council</option>
+        <option>Community Meeting</option>
+        <option>Other</option>
+      </select>
+      <select id="filterStatus" onchange="render()">
+        <option value="">All Statuses</option>
+        <option>Tentative</option>
+        <option>Confirmed</option>
+        <option>On Hold</option>
+        <option>Completed</option>
+        <option>Cancelled</option>
+      </select>
+      <input id="filterFrom" type="date" onchange="render()" title="From date">
+      <input id="filterTo" type="date" onchange="render()" title="To date">
+    </div>
+
+    <div class="print-title">
+      <h1>Jurupa Valley Tentative Agenda</h1>
+      <p id="printSubtitle"></p>
+    </div>
+
+    <div class="agenda-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:9%">Project ID</th>
+            <th style="width:8%">Type</th>
+            <th style="width:27%">Description</th>
+            <th style="width:13%">Project Location</th>
+            <th style="width:11%">Applicant</th>
+            <th style="width:9%">Project Manager</th>
+            <th style="width:11%">Notice Type</th>
+            <th style="width:7%">Status</th>
+            <th class="actions no-print" style="width:5%">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="agendaBody"></tbody>
+      </table>
+      <div id="emptyState" class="empty" style="display:none">No agenda items match the current filters.</div>
+    </div>
+  </section>
+  <div class="small-note">Data is saved in this browser using local storage. Use “Export Backup” periodically if you want a portable copy.</div>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop" onclick="backdropClose(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add Agenda Item</h2>
+      <button class="ghost" onclick="closeModal()">✕</button>
+    </div>
+    <form id="itemForm" onsubmit="saveItem(event)">
+      <div class="modal-body">
+        <input type="hidden" id="editId">
+        <div class="form-grid">
+          <div class="field">
+            <label>Meeting Type</label>
+            <select id="meetingType" required>
+              <option>Development Review Committee</option>
+              <option>Director Hearing</option>
+              <option>Planning Commission</option>
+              <option>City Council</option>
+              <option>Community Meeting</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Hearing / Meeting Date</label>
+            <input id="hearingDate" type="date" required>
+          </div>
+          <div class="field">
+            <label>Meeting Time</label>
+            <input id="meetingTime" type="time">
+          </div>
+
+          <div class="field">
+            <label>Project ID</label>
+            <input id="projectId" placeholder="e.g., MA26106 (PCN26001)">
+          </div>
+          <div class="field">
+            <label>Type</label>
+            <input id="itemType" placeholder="e.g., Hearing, Study Session">
+          </div>
+          <div class="field">
+            <label>Project Status</label>
+            <select id="projectStatus">
+              <option>Tentative</option>
+              <option>Confirmed</option>
+              <option>On Hold</option>
+              <option>Completed</option>
+              <option>Cancelled</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label>Description</label>
+            <textarea id="description" placeholder="Project or agenda item description" required></textarea>
+          </div>
+
+          <div class="field">
+            <label>Project Location</label>
+            <input id="location" placeholder="Address, APN, or City-wide">
+          </div>
+          <div class="field">
+            <label>Applicant</label>
+            <input id="applicant">
+          </div>
+          <div class="field">
+            <label>Project Manager</label>
+            <input id="projectManager">
+          </div>
+
+          <div class="field">
+            <label>Notice Type</label>
+            <select id="noticeType">
+              <option value="">None / N/A</option>
+              <option>10 Day</option>
+              <option>20 Day</option>
+              <option>30 Day</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Notice Status</label>
+            <select id="noticeStatus">
+              <option value="">N/A</option>
+              <option>Not Sent</option>
+              <option>Drafted</option>
+              <option>Sent</option>
+              <option>Completed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Reports Due</label>
+            <input id="reportsDue" type="date">
+          </div>
+
+          <div class="field">
+            <label>10-Day Notice Due</label>
+            <input id="notice10" type="date">
+          </div>
+          <div class="field">
+            <label>20-Day Notice Due</label>
+            <input id="notice20" type="date">
+          </div>
+          <div class="field">
+            <label>Notes</label>
+            <input id="notes" placeholder="Optional internal note">
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="secondary" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="primary">Save Item</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'jurupaValleyTentativeAgenda_v1';
+
+const seedItems = [
+  {
+    id: cryptoRandom(), meetingType:'Planning Commission', hearingDate:'2026-08-26', meetingTime:'',
+    projectId:'MA26106 (PCN26001)', itemType:'Hearing',
+    description:'PCN to allow Beer, Wine, & Distilled Spirits for Sprouts',
+    location:'8054 Limonite Ave.', applicant:'Terri Dickerhoff (Sprouts Farmers Market)', projectManager:'Andy',
+    noticeType:'10 Day', noticeStatus:'Not Sent', reportsDue:'2026-07-27', notice10:'2026-08-03', notice20:'2026-07-20',
+    projectStatus:'Tentative', notes:''
+  },
+  {
+    id: cryptoRandom(), meetingType:'Planning Commission', hearingDate:'2026-08-26', meetingTime:'',
+    projectId:'MA24067', itemType:'Hearing',
+    description:'221 single-family residential subdivision',
+    location:'PA 5 of Paradise Knolls', applicant:'Raymond Allard', projectManager:'Rey',
+    noticeType:'10 Day', noticeStatus:'Not Sent', reportsDue:'2026-07-27', notice10:'2026-08-03', notice20:'2026-07-20',
+    projectStatus:'Tentative', notes:''
+  },
+  {
+    id: cryptoRandom(), meetingType:'Planning Commission', hearingDate:'2026-08-26', meetingTime:'',
+    projectId:'MA26148 (TTM37211M2)', itemType:'Hearing',
+    description:'Minor Change to Seasons at Sagebrush — modify undergrounding Condition 3.15',
+    location:'TR37211 (SR 60 / Pacific Ave.)', applicant:'', projectManager:'Rob',
+    noticeType:'', noticeStatus:'', reportsDue:'2026-07-27', notice10:'2026-08-03', notice20:'2026-07-20',
+    projectStatus:'Tentative', notes:''
+  },
+  {
+    id: cryptoRandom(), meetingType:'Development Review Committee', hearingDate:'2026-09-02', meetingTime:'',
+    projectId:'MA26184', itemType:'Mixed Use Development',
+    description:'3-story mixed-use development consisting of restaurants, retail space, banquet hall, and 14 apartments. Entitlements: GPA, CZ, and CUP.',
+    location:'8928 Mission Blvd.', applicant:'Divinity Grace, LLC', projectManager:'Oscar',
+    noticeType:'', noticeStatus:'N/A', reportsDue:'2026-07-22', notice10:'', notice20:'',
+    projectStatus:'Tentative', notes:''
+  },
+  {
+    id: cryptoRandom(), meetingType:'Planning Commission', hearingDate:'2026-09-09', meetingTime:'',
+    projectId:'MA26102 (CUP26008)', itemType:'Hearing',
+    description:'CUP for alcohol sales for on-site consumption at Lindo Michoacan',
+    location:'9241 Limonite Ave.', applicant:'Maryam Poursafar', projectManager:'Oscar',
+    noticeType:'10 Day', noticeStatus:'Not Sent', reportsDue:'2026-08-10', notice10:'2026-08-17', notice20:'2026-08-03',
+    projectStatus:'Tentative', notes:''
+  },
+  {
+    id: cryptoRandom(), meetingType:'Director Hearing', hearingDate:'2026-09-16', meetingTime:'',
+    projectId:'MA25201', itemType:'Hearing',
+    description:'EOT for SDP — Industrial Outdoor Venture 30,616 SF Building',
+    location:'11909 Riverside Dr.', applicant:'Conor Clay Park Partners', projectManager:'Rey',
+    noticeType:'10 Day', noticeStatus:'Not Sent', reportsDue:'2026-08-14', notice10:'2026-08-18', notice20:'2026-08-28',
+    projectStatus:'Tentative', notes:''
+  }
+];
+
+function cryptoRandom(){
+  try { return crypto.randomUUID(); }
+  catch(e){ return 'id-'+Date.now()+'-'+Math.random().toString(16).slice(2); }
+}
+
+let items = loadItems();
+
+function loadItems(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seedItems));
+    return [...seedItems];
+  }
+  try { return JSON.parse(raw); } catch(e) { return [...seedItems]; }
+}
+function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+
+function fmtDate(s){
+  if(!s) return '';
+  const [y,m,d]=s.split('-').map(Number);
+  return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'numeric',day:'numeric',year:'numeric'});
+}
+function fmtTime(t){
+  if(!t) return '';
+  const [h,m]=t.split(':').map(Number);
+  return new Date(2000,0,1,h,m).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+function escapeHtml(v=''){
+  return String(v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+function meetingClass(type){
+  if(type==='Planning Commission') return 'meeting-pc';
+  if(type==='Development Review Committee') return 'meeting-drc';
+  if(type==='Director Hearing') return 'meeting-director';
+  if(type==='City Council') return 'meeting-cc';
+  if(type==='Community Meeting') return 'meeting-community';
+  return 'meeting-other';
+}
+function pill(status){
+  const cls = status==='Confirmed'?'status-confirmed':
+              status==='Completed'?'status-completed':
+              status==='Cancelled'?'status-cancelled':
+              status==='On Hold'?'status-hold':'status-tentative';
+  return `<span class="status-pill ${cls}">${escapeHtml(status||'Tentative')}</span>`;
+}
+
+function filteredItems(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const mt=document.getElementById('filterMeeting').value;
+  const st=document.getElementById('filterStatus').value;
+  const from=document.getElementById('filterFrom').value;
+  const to=document.getElementById('filterTo').value;
+  return items.filter(x=>{
+    const hay=[x.projectId,x.itemType,x.description,x.location,x.applicant,x.projectManager,x.noticeType,x.noticeStatus,x.notes].join(' ').toLowerCase();
+    return (!q || hay.includes(q)) &&
+           (!mt || x.meetingType===mt) &&
+           (!st || x.projectStatus===st) &&
+           (!from || x.hearingDate>=from) &&
+           (!to || x.hearingDate<=to);
+  }).sort((a,b)=>(a.hearingDate||'9999').localeCompare(b.hearingDate||'9999') || (a.meetingTime||'').localeCompare(b.meetingTime||'') || (a.projectId||'').localeCompare(b.projectId||''));
+}
+
+function render(){
+  const data=filteredItems();
+  const body=document.getElementById('agendaBody');
+  const empty=document.getElementById('emptyState');
+  body.innerHTML='';
+  empty.style.display=data.length?'none':'block';
+
+  const groups={};
+  data.forEach(x=>{
+    const key=(x.hearingDate||'No Date')+'|'+x.meetingType;
+    (groups[key] ||= []).push(x);
+  });
+
+  Object.entries(groups).forEach(([key,group])=>{
+    const first=group[0];
+    const tr=document.createElement('tr');
+    tr.className='meeting-row '+meetingClass(first.meetingType);
+    const due=first.reportsDue ? ` — Reports Due: ${fmtDate(first.reportsDue)}` : '';
+    const noticeBits=[];
+    if(first.notice20) noticeBits.push(`20-day notice: ${fmtDate(first.notice20)}`);
+    if(first.notice10) noticeBits.push(`10-day notice: ${fmtDate(first.notice10)}`);
+    tr.innerHTML=`<td colspan="3">${escapeHtml(fmtDate(first.hearingDate))} ${escapeHtml(first.meetingType.toUpperCase())}${escapeHtml(due)}</td>
+                  <td colspan="6">${escapeHtml(noticeBits.join('   |   '))}</td>`;
+    body.appendChild(tr);
+
+    group.forEach(x=>{
+      const row=document.createElement('tr');
+      const notice=[x.noticeType, x.noticeStatus].filter(Boolean).join(' - ') || 'N/A';
+      row.innerHTML=`
+        <td>${escapeHtml(x.projectId||'')}</td>
+        <td>${escapeHtml(x.itemType||'')}</td>
+        <td>${escapeHtml(x.description||'')}</td>
+        <td>${escapeHtml(x.location||'')}</td>
+        <td>${escapeHtml(x.applicant||'')}</td>
+        <td>${escapeHtml(x.projectManager||'')}</td>
+        <td>${escapeHtml(notice)}</td>
+        <td>${pill(x.projectStatus)}</td>
+        <td class="actions no-print">
+          <button class="ghost" onclick="editItem('${x.id}')">Edit</button>
+          <button class="danger" onclick="deleteItem('${x.id}')">Delete</button>
+        </td>`;
+      body.appendChild(row);
+    });
+  });
+
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('countUpcoming').textContent = items.filter(x=>x.hearingDate>=today && x.projectStatus!=='Cancelled' && x.projectStatus!=='Completed').length;
+  document.getElementById('countPC').textContent = items.filter(x=>x.meetingType==='Planning Commission' && x.hearingDate>=today && x.projectStatus!=='Cancelled').length;
+  document.getElementById('countDRC').textContent = items.filter(x=>x.meetingType==='Development Review Committee' && x.hearingDate>=today && x.projectStatus!=='Cancelled').length;
+  document.getElementById('countDirector').textContent = items.filter(x=>x.meetingType==='Director Hearing' && x.hearingDate>=today && x.projectStatus!=='Cancelled').length;
+}
+
+function openAdd(){
+  document.getElementById('itemForm').reset();
+  document.getElementById('editId').value='';
+  document.getElementById('modalTitle').textContent='Add Agenda Item';
+  document.getElementById('projectStatus').value='Tentative';
+  document.getElementById('modalBackdrop').style.display='flex';
+}
+function closeModal(){ document.getElementById('modalBackdrop').style.display='none'; }
+function backdropClose(e){ if(e.target.id==='modalBackdrop') closeModal(); }
+
+function field(id){ return document.getElementById(id); }
+
+function saveItem(e){
+  e.preventDefault();
+  const obj={
+    id: field('editId').value || cryptoRandom(),
+    meetingType: field('meetingType').value,
+    hearingDate: field('hearingDate').value,
+    meetingTime: field('meetingTime').value,
+    projectId: field('projectId').value.trim(),
+    itemType: field('itemType').value.trim(),
+    description: field('description').value.trim(),
+    location: field('location').value.trim(),
+    applicant: field('applicant').value.trim(),
+    projectManager: field('projectManager').value.trim(),
+    noticeType: field('noticeType').value,
+    noticeStatus: field('noticeStatus').value,
+    reportsDue: field('reportsDue').value,
+    notice10: field('notice10').value,
+    notice20: field('notice20').value,
+    projectStatus: field('projectStatus').value,
+    notes: field('notes').value.trim()
+  };
+  const idx=items.findIndex(x=>x.id===obj.id);
+  if(idx>=0) items[idx]=obj; else items.push(obj);
+  persist(); closeModal(); render();
+}
+function editItem(id){
+  const x=items.find(a=>a.id===id); if(!x) return;
+  field('editId').value=x.id;
+  field('meetingType').value=x.meetingType||'Other';
+  field('hearingDate').value=x.hearingDate||'';
+  field('meetingTime').value=x.meetingTime||'';
+  field('projectId').value=x.projectId||'';
+  field('itemType').value=x.itemType||'';
+  field('description').value=x.description||'';
+  field('location').value=x.location||'';
+  field('applicant').value=x.applicant||'';
+  field('projectManager').value=x.projectManager||'';
+  field('noticeType').value=x.noticeType||'';
+  field('noticeStatus').value=x.noticeStatus||'';
+  field('reportsDue').value=x.reportsDue||'';
+  field('notice10').value=x.notice10||'';
+  field('notice20').value=x.notice20||'';
+  field('projectStatus').value=x.projectStatus||'Tentative';
+  field('notes').value=x.notes||'';
+  document.getElementById('modalTitle').textContent='Edit Agenda Item';
+  document.getElementById('modalBackdrop').style.display='flex';
+}
+function deleteItem(id){
+  const x=items.find(a=>a.id===id);
+  if(!x) return;
+  if(confirm(`Delete ${x.projectId || 'this agenda item'}?`)){
+    items=items.filter(a=>a.id!==id);
+    persist(); render();
+  }
+}
+function resetFilters(){
+  ['search','filterMeeting','filterStatus','filterFrom','filterTo'].forEach(id=>document.getElementById(id).value='');
+  render();
+}
+function printAgenda(){
+  const now=new Date();
+  document.getElementById('printSubtitle').textContent='Printed '+now.toLocaleString()+' • Showing '+filteredItems().length+' item(s)';
+  window.print();
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(items,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='jurupa-valley-tentative-agenda-backup.json';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function importData(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const incoming=JSON.parse(reader.result);
+      if(!Array.isArray(incoming)) throw new Error();
+      if(confirm(`Import ${incoming.length} agenda item(s)? This will replace the current browser data.`)){
+        items=incoming; persist(); render();
+      }
+    }catch(err){ alert('That file is not a valid agenda backup.'); }
+    e.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+render();
+</script>
+</body>
+</html>
